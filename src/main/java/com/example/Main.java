@@ -16,8 +16,11 @@
 
 package com.example;
 
+import com.example.pokemon.Pokemon;
+import com.example.pokemon.PokemonRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,6 +39,9 @@ public class Main {
   @Value("${spring.datasource.url}")
   private String dbUrl;
 
+  @Autowired
+  private PokemonRepository repository;
+
   public static void main(String[] args) throws Exception {
     SpringApplication.run(Main.class, args);
   }
@@ -48,11 +54,14 @@ public class Main {
   @RequestMapping("/db")
   String db(Map<String, Object> model) {
     ObjectMapper mapper = new ObjectMapper();
-    TypeReference<List<Object>> typeReference = new TypeReference<List<Object>>(){};
+    TypeReference<List<Pokemon>> typeReference = new TypeReference<List<Pokemon>>(){};
     InputStream inputStream = TypeReference.class.getResourceAsStream("/pokedex.json");
     try {
-      List<Object> users = mapper.readValue(inputStream,typeReference);
-      model.put("records", users);
+      List<Pokemon> pokemons = mapper.readValue(inputStream,typeReference);
+      for (Pokemon pokemon : pokemons) {
+        repository.save(pokemon);
+      }
+      model.put("records", pokemons);
       return "db";
     } catch (IOException e){
       System.out.println("Unable to save users: " + e.getMessage());
