@@ -4,6 +4,7 @@ target/
 *.iml
 .classpath
 .project
+.DS_Store
 .settings/
 docs/tmp/
 docs/java-getting-started/
