@@ -57,6 +57,7 @@ public class Main {
     TypeReference<List<Pokemon>> typeReference = new TypeReference<List<Pokemon>>(){};
     InputStream inputStream = TypeReference.class.getResourceAsStream("/pokedex.json");
     try {
+      repository.deleteAll();
       List<Pokemon> pokemons = mapper.readValue(inputStream,typeReference);
       for (Pokemon pokemon : pokemons) {
         repository.save(pokemon);
